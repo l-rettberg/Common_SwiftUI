@@ -1,11 +1,5 @@
 // swift-tools-version:5.9
 import PackageDescription
-import Foundation
-
-// Detect build configuration from environment variable set by Xcode
-// Xcode sets CONFIGURATION=Release/Debug automatically
-let configuration = ProcessInfo.processInfo.environment["CONFIGURATION"] ?? "Debug"
-let useBinary: Bool = configuration.lowercased().contains("release")
 
 let package = Package(
     name: "CommonSwiftUI",
@@ -13,22 +7,28 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
+        // Source product for development and debugging
         .library(
             name: "CommonSwiftUI",
-            targets: [useBinary ? "CommonSwiftUIBinary" : "CommonSwiftUISource"]
+            targets: ["CommonSwiftUISource"]
+        ),
+        // Binary product for release builds and distribution
+        .library(
+            name: "CommonSwiftUIBinary",
+            targets: ["CommonSwiftUIBinary"]
         ),
     ],
     targets: [
         // Source target for development
         .target(
             name: "CommonSwiftUISource",
-            path: "./Sources/CommonSwiftUI"
+            path: "Sources/CommonSwiftUI"
         ),
         
         // Binary target for release / archive
         .binaryTarget(
             name: "CommonSwiftUIBinary",
-            path: "./Sources/CommonSwiftUI.xcframework"
+            path: "Sources/CommonSwiftUI.xcframework"
         )
     ]
 )
