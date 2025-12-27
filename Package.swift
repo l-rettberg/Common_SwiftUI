@@ -8,11 +8,13 @@ let package = Package(
     ],
     products: [
         // Source product for development and debugging
+        // Use: import CommonSwiftUI
         .library(
             name: "CommonSwiftUI",
-            targets: ["CommonSwiftUISource"]
+            targets: ["CommonSwiftUI"]
         ),
         // Binary product for release builds and distribution
+        // Use: import CommonSwiftUI (same module name)
         .library(
             name: "CommonSwiftUIBinary",
             targets: ["CommonSwiftUIBinary"]
@@ -20,12 +22,14 @@ let package = Package(
     ],
     targets: [
         // Source target for development
+        // Module name: CommonSwiftUI
         .target(
-            name: "CommonSwiftUISource",
+            name: "CommonSwiftUI",
             path: "Sources/CommonSwiftUI"
         ),
         
         // Binary target for release / archive
+        // Module name: CommonSwiftUI (from xcframework)
         .binaryTarget(
             name: "CommonSwiftUIBinary",
             path: "Sources/CommonSwiftUI.xcframework"
