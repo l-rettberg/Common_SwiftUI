@@ -5,3 +5,11 @@
 
  Each component is designed with flexibility and ease of use in mind, ensuring seamless integration and consistent performance across various app environments. Whether you need simple alerts or complex loading indicators, this SDK equips you with the resources to build high-quality, feature-rich SwiftUI apps.
  */
+
+import SwiftUI
+
+/// CommonSwiftUI module
+public enum CommonSwiftUI {
+    /// SDK version information
+    public static let version = "1.2.0"
+}
