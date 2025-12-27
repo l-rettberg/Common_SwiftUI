@@ -1,6 +1,4 @@
-// swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -9,13 +7,32 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
+        // Source product for development and debugging
+        // Use: import CommonSwiftUI
         .library(
             name: "CommonSwiftUI",
-            targets: ["CommonSwiftUI"]),
+            targets: ["CommonSwiftUI"]
+        ),
+        // Binary product for release builds and distribution
+        // Use: import CommonSwiftUI (same module name)
+        .library(
+            name: "CommonSwiftUIBinary",
+            targets: ["CommonSwiftUIBinary"]
+        ),
     ],
     targets: [
-        .binaryTarget(
+        // Source target for development
+        // Module name: CommonSwiftUI
+        .target(
             name: "CommonSwiftUI",
-            path: "./Sources/CommonSwiftUI.xcframework")
+            path: "Sources/CommonSwiftUI"
+        ),
+        
+        // Binary target for release / archive
+        // Module name: CommonSwiftUI (from xcframework)
+        .binaryTarget(
+            name: "CommonSwiftUIBinary",
+            path: "Sources/CommonSwiftUI.xcframework"
+        )
     ]
 )
