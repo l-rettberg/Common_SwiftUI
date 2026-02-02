@@ -44,6 +44,7 @@ public final class Toast: ObservableObject {
     ///   - tint: The color of the text and symbol. Defaults to `.primary`.
     ///   - isUserInteractionEnabled: A Boolean value that determines whether the toast allows user interaction. Defaults to false.
     ///   - timing: The duration for which the toast should remain on screen. Defaults to `.medium`.
+    ///   - presentationStyle: Where the toast appears (top-down or bottom-up). Defaults to `.topDown`.
     ///
     /// ## Usage:
     /// ```swift
@@ -56,10 +57,12 @@ public final class Toast: ObservableObject {
     ///         timing: .long
     ///     )
     /// }
+    /// // From bottom:
+    /// Toast.shared.present(title: "Done", symbol: nil, presentationStyle: .bottomUp)
     /// ```
-    public func present(title: String, symbol: String?, tint: Color = .primary, isUserInteractionEnabled: Bool = false, timing: Speed = .medium) {
+    public func present(title: String, symbol: String? = nil, tint: Color = .primary, isUserInteractionEnabled: Bool = false, timing: Speed = .medium, presentationStyle: ToastPresentationStyle = .topDown) {
         withAnimation(.snappy) {
-            toasts.append(.init(title: title, symbol: symbol, tint: tint, isUserInteractionEnabled: isUserInteractionEnabled, timing: timing))
+            toasts.append(.init(title: title, symbol: symbol, tint: tint, isUserInteractionEnabled: isUserInteractionEnabled, timing: timing, presentationStyle: presentationStyle))
         }
     }
     

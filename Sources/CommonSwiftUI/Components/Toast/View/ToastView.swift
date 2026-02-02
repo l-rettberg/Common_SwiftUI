@@ -47,10 +47,12 @@ struct ToastView: View {
                     guard item.isUserInteractionEnabled else { return }
                     let endY = value.translation.height
                     let velocityY = value.velocity.height
-                    
-                    if (endY + velocityY) > 100 {
-                        // removing Toast
-                        removeToast()
+                    let threshold: CGFloat = 100
+                    switch item.presentationStyle {
+                    case .topDown:
+                        if (endY + velocityY) < -threshold { removeToast() }
+                    case .bottomUp:
+                        if (endY + velocityY) > threshold { removeToast() }
                     }
                 })
         )
@@ -66,7 +68,7 @@ struct ToastView: View {
         }
         // Limiting Size
         .frame(maxWidth: size.width * 0.7)
-        .transition(.offset(y: 150))
+        .transition(item.presentationStyle == .topDown ? .offset(y: -150) : .offset(y: 150))
     }
     
     private func removeToast() {

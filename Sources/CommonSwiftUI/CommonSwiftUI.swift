@@ -11,5 +11,5 @@ import SwiftUI
 /// CommonSwiftUI module
 public enum CommonSwiftUI {
     /// SDK version information
-    public static let version = "1.2.0"
+    public static let version = "1.2.1"
 }
