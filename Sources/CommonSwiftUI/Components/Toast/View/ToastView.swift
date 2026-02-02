@@ -68,7 +68,12 @@ struct ToastView: View {
         }
         // Limiting Size
         .frame(maxWidth: size.width * 0.7)
-        .transition(item.presentationStyle == .topDown ? .offset(y: -150) : .offset(y: 150))
+        .transition(
+            .asymmetric(
+                insertion: item.presentationStyle == .topDown ? .offset(y: -150) : .offset(y: 150),
+                removal: item.presentationStyle == .topDown ? .offset(y: -150) : .offset(y: 150)
+            )
+        )
     }
     
     private func removeToast() {
