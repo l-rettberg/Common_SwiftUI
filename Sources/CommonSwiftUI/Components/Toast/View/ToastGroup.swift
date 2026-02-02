@@ -29,18 +29,17 @@ struct ToastGroup: View {
     @ViewBuilder
     private func toastStack(size: CGSize, safeArea: EdgeInsets, style: ToastPresentationStyle) -> some View {
         let items = model.toasts.filter { $0.presentationStyle == style }
-        if !items.isEmpty {
-            ZStack {
-                ForEach(items) { toast in
-                    ToastView(size: size, item: toast)
-                        .scaleEffect(scale(toast, in: items))
-                        .offset(y: offsetY(toast, in: items, style: style))
-                        .zIndex(Double(items.firstIndex(where: { $0.id == toast.id }) ?? 0))
-                }
+        ZStack {
+            ForEach(items) { toast in
+                ToastView(size: size, item: toast)
+                    .scaleEffect(scale(toast, in: items))
+                    .offset(y: offsetY(toast, in: items, style: style))
+                    .zIndex(Double(items.firstIndex(where: { $0.id == toast.id }) ?? 0))
             }
-            .padding(style == .topDown ? .top : .bottom, style == .topDown ? (safeArea.top == .zero ? 15 : 10) : (safeArea.bottom == .zero ? 15 : 10))
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: style == .topDown ? .top : .bottom)
         }
+        .padding(style == .topDown ? .top : .bottom, style == .topDown ? (safeArea.top == .zero ? 15 : 10) : (safeArea.bottom == .zero ? 15 : 10))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: style == .topDown ? .top : .bottom)
+        .animation(.snappy, value: items.map(\.id))
     }
 
     private func offsetY(_ item: ToastItem, in items: [ToastItem], style: ToastPresentationStyle) -> CGFloat {
