@@ -8,37 +8,57 @@
 import SwiftUI
 
 struct ToastGroup: View {
-    
+
     @StateObject private var model = Toast.shared
-    
+
     var body: some View {
-        GeometryReader {
-            let size = $0.size
-            let safeArea = $0.safeAreaInsets
-            
+        GeometryReader { geometry in
+            let size = geometry.size
+            let safeArea = geometry.safeAreaInsets
+
             ZStack {
-                ForEach(model.toasts) { toast in
-                    ToastView(size: size, item: toast)
-                        .scaleEffect(scale(toast))
-                        .offset(y: offsetY(toast))
-                        .zIndex(Double(model.toasts.firstIndex(where: { $0.id == toast.id }) ?? 0))
-                }
+                // Top-down toasts (default)
+                toastStack(size: size, safeArea: safeArea, style: .topDown)
+
+                // Bottom-up toasts
+                toastStack(size: size, safeArea: safeArea, style: .bottomUp)
             }
-            .padding(.bottom, safeArea.top == .zero ? 15 : 10)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
         }
     }
-    
-    private func offsetY(_ item: ToastItem) -> CGFloat {
-        let index = CGFloat(model.toasts.firstIndex(where: { $0.id == item.id }) ?? 0)
-        let totalCount = CGFloat(model.toasts.count) - 1
-        return (totalCount - index) >= 2 ? -20 : ((totalCount - index) * -10)
+
+    @ViewBuilder
+    private func toastStack(size: CGSize, safeArea: EdgeInsets, style: ToastPresentationStyle) -> some View {
+        let items = model.toasts.filter { $0.presentationStyle == style }
+        if !items.isEmpty {
+            ZStack {
+                ForEach(items) { toast in
+                    ToastView(size: size, item: toast)
+                        .scaleEffect(scale(toast, in: items))
+                        .offset(y: offsetY(toast, in: items, style: style))
+                        .zIndex(Double(items.firstIndex(where: { $0.id == toast.id }) ?? 0))
+                }
+            }
+            .padding(style == .topDown ? .top : .bottom, style == .topDown ? (safeArea.top == .zero ? 15 : 10) : (safeArea.bottom == .zero ? 15 : 10))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: style == .topDown ? .top : .bottom)
+        }
     }
-    
-    private func scale(_ item: ToastItem) -> CGFloat {
-        let index = CGFloat(model.toasts.firstIndex(where: { $0.id == item.id }) ?? 0)
-        let totalCount = CGFloat(model.toasts.count) - 1
+
+    private func offsetY(_ item: ToastItem, in items: [ToastItem], style: ToastPresentationStyle) -> CGFloat {
+        let index = CGFloat(items.firstIndex(where: { $0.id == item.id }) ?? 0)
+        let totalCount = CGFloat(items.count) - 1
+        switch style {
+        case .topDown:
+            // Newest at top; older stack downward (positive offset)
+            return (totalCount - index) >= 2 ? 20 : ((totalCount - index) * 10)
+        case .bottomUp:
+            // Newest at bottom; older stack upward (negative offset)
+            return (totalCount - index) >= 2 ? -20 : ((totalCount - index) * -10)
+        }
+    }
+
+    private func scale(_ item: ToastItem, in items: [ToastItem]) -> CGFloat {
+        let index = CGFloat(items.firstIndex(where: { $0.id == item.id }) ?? 0)
+        let totalCount = CGFloat(items.count) - 1
         return 1.0 - ((totalCount - index) >= 2 ? 0.2 : ((totalCount - index) * 0.1))
     }
-    
 }
